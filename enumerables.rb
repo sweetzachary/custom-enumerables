@@ -11,12 +11,20 @@ module Enumerable
     end
   end
 
-  def my_map
-    res = self.class.new
-    self.my_each_with_index do |k, v|
-      res[k] = yield(k, v)
+  def my_map(pr=nil)
+    if block_given?
+      res = self.class.new
+      self.my_each_with_index do |k, v|
+        res[k] = yield(k, v)
+      end
+      res
+    else
+      res = self.class.new
+      self.my_each_with_index do |k, v|
+        res[k] = pr.call(k, v)
+      end
+      res
     end
-    res
   end
 
   def my_all?(val)
@@ -76,7 +84,7 @@ module Enumerable
     res
   end
 
-  def my_inject(val)
+  def my_inject(val=nil)
     if val.nil?
       mem = self[0]
       work = self.drop(1)
@@ -88,5 +96,9 @@ module Enumerable
       mem = yield(mem, v)
     end
     mem
+  end
+
+  def multiply_els
+    self.my_inject {|a,b| a*b}
   end
 end
